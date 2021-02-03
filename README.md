@@ -27,11 +27,11 @@ list(), zeros(), string(), shape(), length(), range()
 ~, &, |, ^, <<, >>
 
 ### Others
-Function call: f();
-Keywords: in, of, stop, exit
-Conditional: a ? { ... };
-Ternary conditional: a ? b : c;
-Constant: const Num MAX_SIZE;
+- Function call: f();
+- Keywords: in, of, stop, exit
+- Conditional: a ? { ... };
+- Ternary conditional: a ? b : c;
+- Constant: const Num MAX_SIZE;
 
 ## Strings
 

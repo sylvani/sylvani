@@ -10,7 +10,7 @@ List<Dyn [| Num | Str | ...]>, Bool, <Dyn -> Void>, Set, Map<Str, Num> etc
 ``` type Dyn; # PRIM_TYPE ```
 
 ### Dynamic Type
-``` Dyn<T> -> T ```
+``` Dyn<T> -> <Dyn | T> ```
 ```
 Dyn<Void> result;
 type result; # Dyn<Void>
@@ -19,10 +19,12 @@ print result; # void
 result = 4;
 type result; # Dyn<Num>
 result is Num; # true
+result is Dyn; # true
 
 result = string(result);
 type result; # Dyn<Str>
 result is Num; # false
+result is Dyn; # true
 ```
 
 ## Numbers
@@ -44,7 +46,22 @@ print ans; # 0
 ```
 
 ## Statement Keywords
-``` try, catch, throw, until, is, if, else, while, for, type, print, import, from, assert ``` etc
+``` stop, exit, try, catch, throw, until, is, if, else, while, type, print, import, from, assert ``` etc
+
+## Loops
+
+### until
+```
+Num i = 0; {
+  print i;
+  i++;
+} until i == 100;
+```
+
+> NOTE: there is no for loop
+
+## Anonymous Function
+``` <<Num, Str> -> Num> (a, b) { ... } ```
 
 ## Built-in Values
 ``` void, true, false ``` etc
@@ -52,7 +69,32 @@ print ans; # 0
 ## Built-in Functions
 
 ### List Helpers
-``` split(), list(), zeros(), shape(), length(), range() ``` etc
+``` push(), pop(), each(), split(), list(), zeros(), shape(), length(), range() ``` etc
+
+#### range
+``` Num? is <Num | Void> == true ```
+```
+< Num, Num?, Num? -> List<Num> > range = (start, end = 0, step = 1) {
+  List<Num> output = [];
+  
+  Num i = start;
+  
+  {
+    output[] = i;
+    i += step; 
+  } until i >= end;
+  
+  output;
+};
+```
+
+#### each
+```
+<Num -> Void> print_num = (n) { print n; };
+
+each([0.1, 0.04, 0.25, 0.2], print_num);
+each(range(2, 10, 2), print_num); # 2 4 6 8
+```
 
 ### Maths
 ``` sin(), cos(), tan(), log(), ln() ``` etc
@@ -76,7 +118,7 @@ print ans; # 0
 
 ### Others
 - Function call: ``` f(); ```
-- Keywords: ``` in, of, stop, exit ```
+- Keywords: ``` in, of ```
 - Conditional: ``` a ? { ... }; ```
 - Ternary conditional: ``` a ? b : c; ```
 - Constant: ``` const Num MAX_SIZE; ```
@@ -209,9 +251,9 @@ m[] = v1; # m[0] == [ 0, 0, 0, 0 ]
 m[] = v2; # m == [ [ 0, 0, 0, 0, ], [ 1, 1, 1, 1 ] ]
 v3 -> m[2]; # m[2] == [ -1, -1, -1, -1 ]
 v4 -> m[];
-print length m; # 4
+print length(m); # 4
 
 m = [];
-print length m; # 0
+print length(m); # 0
 ```
 

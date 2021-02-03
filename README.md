@@ -2,35 +2,43 @@
 
 ## Primitive Types PM_TYPE
 ```
-Void, Dyn<Void [| Num | Str | ...]>, Com, Num, Str, List<Dyn [| Num | Str | ...]>,
+Void, Com, Num, Str, List<Bool [| Num | Str | ...]>,
 
-Bool, Dyn -> Void, Map<Str, Num | Com> etc
+Bool, Void -> Void, Map<Str, Num | Com> etc
 ```
 
-``` type Dyn; # PM_TYPE ```
-
-### Dynamic Type
-``` Dyn<T> == Dyn | T ```
+### dynamic Type
 ```
-Dyn<Void> result;
-type result; # Dyn<Void>
+dyn result; # assumed Void
+type result; # Void
 print result; # void
 
 result = 4;
-type result; # Dyn<Num>
+type result; # dyn<Num>
 result is Num; # true
-result is Dyn; # true
 
 result = str(result);
-type result; # Dyn<Str>
+type result; # dyn<Str>
 result is Num; # false
-result is Dyn; # true
+```
+
+### Sets
+Sets are list without duplicated elements
+```
+List<Str> BoardMembers = ["Fiona", "Cindy"];
+List<Str> Directors = ["Ada", "Thomas", "Fiona"];
+List<Str> Teachers = ["Jenny", "Ada", "Tracy", "Thomas"];
+List<Str> Staff = Teachers uni Directors;
+
+"Cindy" in Staff; # false
+"Ada" in Directors int Teachers; # true
+BoardMembers int Directors hsn "Thomas"; # true
 ```
 
 ## Numbers
 ```
-RTL_ASNG_STMT <- PM_TYPE ( '<' PM_TYPE '>' )? PROP_NAME '=' EXPR ';'
-PROP_NAME <- [a-zA-Z0-9_]+
+RTL_ASNG_STMT <- PM_TYPE ( '<' PM_TYPE '>' )? ID '=' EXPR ';'
+ID <- [a-zA-Z0-9_]+
 ```
 
 ### Built-in Mathematical Constants
@@ -49,7 +57,7 @@ PROP_NAME <- [a-zA-Z0-9_]+
 ``` COM_NUM <- NUM 'i' ```
 ```
 # Converting a complex number into a real number
-Com c = 0i, Dyn<Void> ans;
+Com c = 0i, dyn Void ans;
 
 c is Num; # false
 print c; # 0i
@@ -82,7 +90,7 @@ print ans;
 ## Function Chaining
 ```
 print {
-  Dyn _;
+  dyn _;
 
   f(_) -> _; g(_) -> _; p(_) -> _; q(_) -> _; r(_) -> _;
   
@@ -92,15 +100,14 @@ print {
 
 ## Statement Keywords
 ```
-jump, yield, stop, exit, try, catch, throw, until, is,
+return, yield, stop, exit, try, catch, throw, until, is,
 while, type, print, import, export, from, assert
 ```
 > NOTE: if and else statement are replaced by ? and : respectively
 
-### jump
-Stop evaluating the local group, jump out to the parent group, and yield as if done in the parent group
+### return
 ```
-{
+print {
   List<Num> v;
   Num index, count = 0;
 
@@ -113,12 +120,12 @@ Stop evaluating the local group, jump out to the parent group, and yield as if d
     
     index > -1 ? { count++; v = v[:index] + v[index:]; }
     
-    count > 9999 ? jump -1;
+    count > 9999 ? return -1;
 
     print index;
-  } while index > -1; # if jumped, the yield statement will go here
+  } while index > -1;
   
-  yield count;
+  return count;
 };
 ```
 
@@ -139,15 +146,12 @@ print {
 };
 ```
 
-### jump
-```
-```
-
 ## Loops
 
 ### until
 ```
-Num i = 0; {
+Num i = 0;
+{
   print i;
   i++;
 } until i == 100;
@@ -195,7 +199,33 @@ each(range(2, 10, 2), print_num); # 2 4 6 8
 ``` sin(), cos(), tan(), log(), ln() ``` etc
 
 ### Others
-``` str(), set(), map(), num(), error() ``` etc
+``` str(), lsmap(), map(), num(), error() ``` etc
+
+
+## Lists
+
+### Operators
+```
+com A; # complement
+A int B; # intersection
+A uni B; # union
+A dif B; # symmetric difference: { A - B }
+A - B;
+A * B;
+```
+
+### Relations
+```
+x in B;
+x ni B;
+A has y;
+A hsn y;
+A == B;
+A sub B;
+A sup B;
+A nsub B;
+A nsup B;
+```
 
 ## Operators
 
@@ -211,12 +241,15 @@ each(range(2, 10, 2), print_num); # 2 4 6 8
 ### Bitwise
 ``` ~, &, |, ^, <<, >> ```
 
+### Modifiers
+- Constant modifier: ``` const Num MAX_SIZE; ```
+- dynamic type modifier: ``` dyn Void result; ```
+
 ### Others
 - Function call: ``` f(); ```
 - Keywords: ``` in, of ```
 - Conditional: ``` a ? { ... }; ```
 - Ternary conditional: ``` a ? b : c; ```
-- Constant: ``` const Num MAX_SIZE; ```
 
 ## Strings
 
@@ -253,19 +286,19 @@ each(range(2, 10, 2), print_num); # 2 4 6 8
   output;
 };
 
-Str token = c"rand_str -u -n 32"; # instead of rand_str(true, false, true, 32);
+Str key = c"rand_str -u -n 32"; # instead of rand_str(true, false, true, 32);
 ```
   
 ## Scope
 ```
 Num width, height = 500, area;
-print f"width is a {type width} with value {width}"; # width is a Num with value
+print f"width is a {type width} with value {width}"; # width is a Num with value void
 
-# Everything within a process block (PROC) {} has local scope
+# Everything within a GP_STMT has local scope
 {
   Num width = 120;
   height = 5 * width; # width has local reference while height has reference outside the local scope
-  width * height; # process being resolved to a number
+  yield width * height; # process being resolved to a number
 } -> area;
 ```
   

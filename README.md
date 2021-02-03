@@ -21,7 +21,7 @@ type result; # Dyn<Num>
 result is Num; # true
 result is Dyn; # true
 
-result = string(result);
+result = str(result);
 type result; # Dyn<Str>
 result is Num; # false
 result is Dyn; # true
@@ -33,31 +33,110 @@ RTL_ASNG_STMT <- PM_TYPE ( '<' PM_TYPE '>' )? PROP_NAME '=' EXPR ';'
 PROP_NAME <- [a-zA-Z0-9_]+
 ```
 
+### Built-in Mathematical Constants
+``` MAT_CST <- '0c' [A-Z]+ ```
+```
+0cPI == 3.1415926535...;
+0cE == 2.71828...;
+```
+
 ### Real
-``` List<Num> real = [ -10, 512, 3.1415926535, 2.71828e+10, 0xE28A ]; ```
+``` List<Num> real = [ -10, 512, 3.1415926535, 2.71828e+10, 0xE28A, 0cPI, 0cE ]; ```
+
+``` NUM <- [0-9]+ ('.' [0-9]+)? ('e' ('+'|'-') [0-9]+)? | MAT_CST | HEX_NUM ```
 
 ### Complex
+``` COM_NUM <- NUM 'i' ```
 ```
-# Converting a complex number to a real number
-Com zero_i = 0i, Dyn<Void> ans;
+# Converting a complex number into a real number
+Com c = 0i, Dyn<Void> ans;
 
-zero_i is Num; # false
-print zero_i; # 0i
+c is Num; # false
+print c; # 0i
 
-ans = zero_i ** 2; # 0 * i^2 -> 0 * -1 -> 0
+ans = c ** 2; # 0 * i^2 -> 0 * -1 -> 0
 ans is Num; # true
 print ans; # 0
+```
+
+## Group Statement
+``` GP_STMT <- '{' (STMT | GP_STMT)* '}' ';' ```
+```
+Num ans = 0;
+
+{ # group 1
+  Num x = 4;
+  Num y = x ** 2;
+  ans += y;
+};
+
+{ # group 2
+  Num x = (0cPI ** 2) / 3;
+  Num y = cos(x) / x;
+  ans += y;
+};
+
+print ans;
+```
+
+## Function Chaining
+```
+print {
+  Dyn _;
+
+  f(_) -> _; g(_) -> _; p(_) -> _; q(_) -> _; r(_) -> _;
+  
+  yield _;
+};
 ```
 
 ## Statement Keywords
 ```
 jump, yield, stop, exit, try, catch, throw, until, is,
-if, else, while, type, print, import, from, assert
+while, type, print, import, export, from, assert
+```
+> NOTE: if and else statement are replaced by ? and : respectively
+
+### jump
+Stop evaluating the local group, jump out to the parent group, and yield as if done in the parent group
+```
+{
+  List<Num> v;
+  Num index, count = 0;
+
+  v = ...; # very large list of numbers
+  
+  ...;
+
+  { # how many 255s are in v?
+    index = 255 in v;
+    
+    index > -1 ? { count++; v = v[:index] + v[index:]; }
+    
+    count > 9999 ? jump -1;
+
+    print index;
+  } while index > -1; # if jumped, the yield statement will go here
+  
+  yield count;
+};
 ```
 
+### stop
+Equivalent to ``` yield void; ```
+
 ### yield
-stopping a code block
+Stop a group statement by yielding a final result
 ```
+Bool isOpen = false;
+
+...
+
+print {
+  isOpen ? close(), yield "it has been closed"; # the statement below won't be evaluated
+  
+  open(), yeild "now it is open";
+};
 ```
 
 ### jump
@@ -116,7 +195,7 @@ each(range(2, 10, 2), print_num); # 2 4 6 8
 ``` sin(), cos(), tan(), log(), ln() ``` etc
 
 ### Others
-``` string(), set(), map(), num(), error() ``` etc
+``` str(), set(), map(), num(), error() ``` etc
 
 ## Operators
 
@@ -174,7 +253,7 @@ each(range(2, 10, 2), print_num); # 2 4 6 8
   output;
 };
 
-Str token = c"rand_string -u -n 32"; # instead of rand_string(true, false, true, 32);
+Str token = c"rand_str -u -n 32"; # instead of rand_str(true, false, true, 32);
 ```
   
 ## Scope

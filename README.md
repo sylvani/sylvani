@@ -1,16 +1,16 @@
 # Sylvani Programming Language
 
-## Primitive Types
+## Primitive Types PM_TYPE
 ```
-Void, Dyn<Void [| Num | Str | ...]>, Com, Num, Str, <Com | Num | Str | ...>
+Void, Dyn<Void [| Num | Str | ...]>, Com, Num, Str, List<Dyn [| Num | Str | ...]>,
 
-List<Dyn [| Num | Str | ...]>, Bool, <Dyn -> Void>, Set, Map<Str, Num> etc
+Bool, Dyn -> Void, Map<Str, Num | Com> etc
 ```
 
-``` type Dyn; # PRIM_TYPE ```
+``` type Dyn; # PM_TYPE ```
 
 ### Dynamic Type
-``` Dyn<T> -> <Dyn | T> ```
+``` Dyn<T> == Dyn | T ```
 ```
 Dyn<Void> result;
 type result; # Dyn<Void>
@@ -28,6 +28,10 @@ result is Dyn; # true
 ```
 
 ## Numbers
+```
+RTL_ASNG_STMT <- PM_TYPE ( '<' PM_TYPE '>' )? PROP_NAME '=' EXPR ';'
+PROP_NAME <- [a-zA-Z0-9_]+
+```
 
 ### Real
 ``` List<Num> real = [ -10, 512, 3.1415926535, 2.71828e+10, 0xE28A ]; ```
@@ -46,7 +50,19 @@ print ans; # 0
 ```
 
 ## Statement Keywords
-``` stop, exit, try, catch, throw, until, is, if, else, while, type, print, import, from, assert ``` etc
+```
+jump, yield, stop, exit, try, catch, throw, until, is,
+if, else, while, type, print, import, from, assert
+```
+
+### yield
+stopping a code block
+```
+```
+
+### jump
+```
+```
 
 ## Loops
 
@@ -61,7 +77,7 @@ Num i = 0; {
 > NOTE: there is no for loop
 
 ## Anonymous Function
-``` <<Num, Str> -> Num> (a, b) { ... } ```
+``` (Num, Str) -> Num> (a, b) { ... } ```
 
 ## Built-in Values
 ``` void, true, false ``` etc
@@ -72,9 +88,9 @@ Num i = 0; {
 ``` push(), pop(), each(), split(), list(), zeros(), shape(), length(), range() ``` etc
 
 #### range
-``` Num? is <Num | Void> == true ```
+``` Num? == Num | Void == true ```
 ```
-< Num, Num?, Num? -> List<Num> > range = (start, end = 0, step = 1) {
+(Num, Num?, Num?) -> List<Num> range = (start, end = 0, step = 1) {
   List<Num> output = [];
   
   Num i = start;
@@ -84,7 +100,7 @@ Num i = 0; {
     i += step; 
   } until i >= end;
   
-  output;
+  yield output;
 };
 ```
 

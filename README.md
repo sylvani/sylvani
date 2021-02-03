@@ -1,8 +1,5 @@
 # Sylvani Programming Language
 
-## Discussion (Cantonese)
-https://lihkg.com/thread/2392460
-
 ## Primitive Types
 Void, Num, Str, List, Bool, Dyn etc
 

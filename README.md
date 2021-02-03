@@ -1,37 +1,37 @@
 # Sylvani Programming Language
 
 ## Numbers
--10, 512, 3.1415926535, 2.71828e+10, 0xE28A
+``` -10, 512, 3.1415926535, 2.71828e+10, 0xE28A ```
 
 ## Statement Keywords
-if, else, while, for, type, print, import, from etc
+``` if, else, while, for, type, print, import, from, assert ``` etc
 
 ## Built-in Values
-void, true, false etc
+``` void, true, false, null ``` etc
 
 ## Built-in Functions
-list(), zeros(), string(), shape(), length(), range()
+``` list(), zeros(), string(), shape(), length(), range(), num() ```
 
 ## Operators
 
 ### Arithmetic
-->, =, +, -, *, /, %, ++, --
+``` ->, =, +, -, *, /, %, ++, -- ```
 
 ### Comparison / Relational
-==, !=, >, <, >=, <=, <=>
+``` ==, !=, >, <, >=, <=, <=> ```
 
 ### Logical
-!, &&, ||
+``` !, &&, || ```
 
 ### Bitwise
-~, &, |, ^, <<, >>
+``` ~, &, |, ^, <<, >> ```
 
 ### Others
-- Function call: f();
-- Keywords: in, of, stop, exit
-- Conditional: a ? { ... };
-- Ternary conditional: a ? b : c;
-- Constant: const Num MAX_SIZE;
+- Function call: ``` f(); ```
+- Keywords: ``` in, of, stop, exit ```
+- Conditional: ``` a ? { ... }; ```
+- Ternary conditional: ``` a ? b : c; ```
+- Constant: ``` const Num MAX_SIZE; ```
 
 ## Strings
 
@@ -67,11 +67,25 @@ r"\w+"ig
   
   output;
 };
+
 Str token = c"rand_string -u -n 32"; # instead of rand_string(true, false, true, 32);
 ```
 
 ## Primitive Types
 Void, Num, Str, List, Bool, Dyn, <Dyn -> Void> etc
+  
+## Scope
+```
+Num width, height = 500, area;
+print f"width is a {type width} with value {width}"; # width is a Num with value null
+
+# Everything within a process block (PROC) {} has local scope
+{
+  Num width = 120;
+  height = 5 * width; # width has local reference while height has reference outside the local scope
+  width * height; # process being resolved to a number
+} -> area;
+```
   
 ## Function Type
 
@@ -81,10 +95,17 @@ Void, Num, Str, List, Bool, Dyn, <Dyn -> Void> etc
 ``` FN_TYPE: '<' PM_TYPE[, PM_TYPE]+ -> PM_TYPE '>' ```
 
 #### Function Body
-``` FN_BODY: '(' PARAMS ')' '{' (STMT | EXPR | PROC | FN_BODY) '}' ```
+``` FN_BODY: '(' PARAMS ')' '{' (STMT | EXPR | PROC | FN_BODY)* '}' ```
 
 ### Examples
-``` <Num, Bool -> Void> functionName ```
+```
+# Without function body
+<Num, Bool -> Void> functionName;
+
+# A function that does nothing;
+<Void -> Void> _ = () {};
+_(); # nothing happened
+```
 
 ```
 # a function whoes name is "repeat" that takes a string and a number then returns a string

@@ -47,10 +47,10 @@
 ```
 
 ### Formatted String
-f"Time remaining: {value} second(s)"
+``` f"Time remaining: {value} second(s)" ```
 
 ### Regular Expression
-r"\w+"ig
+``` r"\w+"ig ```
 
 ### Command Line Style Function Call
 ```

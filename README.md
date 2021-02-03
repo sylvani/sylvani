@@ -10,7 +10,7 @@
 ``` void, true, false, null ``` etc
 
 ## Built-in Functions
-``` list(), zeros(), string(), shape(), length(), range(), num() ```
+``` list(), zeros(), string(), shape(), length(), range(), num(), log() ``` etc
 
 ## Operators
 

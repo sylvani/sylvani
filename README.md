@@ -1,21 +1,40 @@
 # Sylvani Programming Language
 
 ## Numbers
+
+### Real
 ``` -10, 512, 3.1415926535, 2.71828e+10, 0xE28A ```
 
+### Complex
+```
+Num zero = 0i;
+print zero; # 0;
+print real zero; # false
+print complex zero; # true
+1i # where 1i ** 2 = -1
+```
+
 ## Statement Keywords
-``` if, else, while, for, type, print, import, from, assert ``` etc
+``` real, complex, if, else, while, for, type, print, import, from, assert ``` etc
 
 ## Built-in Values
 ``` void, true, false, null ``` etc
 
 ## Built-in Functions
-``` list(), zeros(), string(), shape(), length(), range(), num(), log() ``` etc
+
+### List Helpers
+``` split(), list(), zeros(), shape(), length(), range() ``` etc
+
+### Maths
+``` sin(), cos(), tan(), log(), ln() ``` etc
+
+### Others
+``` string(), set(), map(), num() ``` etc
 
 ## Operators
 
 ### Arithmetic
-``` ->, =, +, -, *, /, %, ++, -- ```
+``` ->, =, +, -, *, **, /, %, ++, -- ```
 
 ### Comparison / Relational
 ``` ==, !=, >, <, >=, <=, <=> ```
@@ -72,7 +91,7 @@ Str token = c"rand_string -u -n 32"; # instead of rand_string(true, false, true,
 ```
 
 ## Primitive Types
-Void, Num, Str, List, Bool, Dyn, <Dyn -> Void> etc
+Void, Num, Str, List<Dyn>, Bool, Dyn, <Dyn -> Void>, Set, Map<Str, Num> etc
   
 ## Scope
 ```

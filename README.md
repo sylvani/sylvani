@@ -1,24 +1,53 @@
 # Sylvani Programming Language
 
+## Primitive Types
+```
+Void, Dyn<Void [| Num | Str | ...]>, Com, Num, Str, <Com | Num | Str | ...>
+
+List<Dyn [| Num | Str | ...]>, Bool, <Dyn -> Void>, Set, Map<Str, Num> etc
+```
+
+``` type Dyn; # PRIM_TYPE ```
+
+### Dynamic Type
+``` Dyn<T> -> T ```
+```
+Dyn<Void> result;
+type result; # Dyn<Void>
+print result; # void
+
+result = 4;
+type result; # Dyn<Num>
+result is Num; # true
+
+result = string(result);
+type result; # Dyn<Str>
+result is Num; # false
+```
+
 ## Numbers
 
 ### Real
-``` -10, 512, 3.1415926535, 2.71828e+10, 0xE28A ```
+``` List<Num> real = [ -10, 512, 3.1415926535, 2.71828e+10, 0xE28A ]; ```
 
 ### Complex
 ```
-Num zero = 0i;
-print zero; # 0;
-print real zero; # false
-print complex zero; # true
-1i # where 1i ** 2 = -1
+# Converting a complex number to a real number
+Com zero_i = 0i, Dyn<Void> ans;
+
+zero_i is Num; # false
+print zero_i; # 0i
+
+ans = zero_i ** 2; # 0 * i^2 -> 0 * -1 -> 0
+ans is Num; # true
+print ans; # 0
 ```
 
 ## Statement Keywords
-``` real, complex, if, else, while, for, type, print, import, from, assert ``` etc
+``` try, catch, throw, until, is, if, else, while, for, type, print, import, from, assert ``` etc
 
 ## Built-in Values
-``` void, true, false, null ``` etc
+``` void, true, false ``` etc
 
 ## Built-in Functions
 
@@ -29,7 +58,7 @@ print complex zero; # true
 ``` sin(), cos(), tan(), log(), ln() ``` etc
 
 ### Others
-``` string(), set(), map(), num() ``` etc
+``` string(), set(), map(), num(), error() ``` etc
 
 ## Operators
 
@@ -89,14 +118,11 @@ print complex zero; # true
 
 Str token = c"rand_string -u -n 32"; # instead of rand_string(true, false, true, 32);
 ```
-
-## Primitive Types
-Void, Num, Str, List<Dyn>, Bool, Dyn, <Dyn -> Void>, Set, Map<Str, Num> etc
   
 ## Scope
 ```
 Num width, height = 500, area;
-print f"width is a {type width} with value {width}"; # width is a Num with value null
+print f"width is a {type width} with value {width}"; # width is a Num with value
 
 # Everything within a process block (PROC) {} has local scope
 {

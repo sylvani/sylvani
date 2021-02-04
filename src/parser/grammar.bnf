@@ -1,0 +1,41 @@
+EOS ::= ';';
+
+CONST ::= 'const';
+
+# Num: real number
+# Com: complex number
+PM_TYPE ::=   'Void' | 'Num' | 'Str' |
+              'Bool' | 'List';
+
+FN_TYPE ::= PM_TYPE (',' PM_TYPE)* '->' PM_TYPE;
+
+TYPE ::= PM_TYPE | FN_TYPE;
+
+ID ::= [a-zA-Z_][a-zA-Z0-9_]*;
+
+HEX_NUM ::= '0x' [a-fA-F0-9]+;
+MAT_CST ::= '0c' [A-Z]+;
+
+NMB_LITR ::= ('+'|'-')? [0-9]* ('.')? [0-9]* ('e' ('+'|'-') [0-9]+)?;
+
+CMPLX_NMB ::= NUM_LITR 'i';
+
+NUMBER ::= HEX_NUM | MAT_CST | NUM_LITR | CMPLX_NMB;
+
+KEYWORD ::=  'return' | 'yield' | 'stop' | 'exit' |
+          'try' | 'catch' | 'throw' | 'until' | 'is' |
+          'while' | 'type' | 'print' | 'import' |
+          'export' | 'from' | 'assert';
+
+LBRC ::= '{';
+RBRC ::= '}';
+
+LPRT ::= '(';
+RPRT ::= ')';
+
+DCL_STMT ::= CONST? TYPE ID EOS;
+RTL_ASNG_STMT ::= DCL_STMT '=' EXPR EOS;
+
+STMT ::= DCL_STMT | RTL_ASNG_STMT;
+
+GRP_STMT ::= LBRC (STMT | GP_STMT)* RBRC EOS;

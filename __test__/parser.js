@@ -1,4 +1,4 @@
-const Parser = require("../src/Parser");
+const Parser = require("../src/parser/Parser");
 
 const parser = new Parser();
 

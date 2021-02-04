@@ -4,8 +4,12 @@ class Environment {
     this._record = record;
   }
 
+  isDefined(id) {
+    return this._record.hasOwnProperty(id);
+  }
+
   lookup(id) {
-    if (!this._record.hasOwnProperty(id)) {
+    if (!this.isDefined(id)) {
       throw new ReferenceError(`Variable ${id} is not defined`);
     }
     return this._record[id];

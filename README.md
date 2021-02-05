@@ -1,14 +1,22 @@
 # Sylvani Programming Language
 
-## Primitive Types PM_TYPE
+A Symbolic Language
+
+## Use first, define later
 
 ```
-Void, Com, Num, Str, List<Bool [| Num | Str | ...]>,
+while isTooBig(length(carrot)) { carrot = chop(carrot); };
 
-Bool, Void -> Void, Map<Str, Num | Com> etc
+Str carrot = "<===========================o*";
+Str -> Str chop = (vege) vege[ length(vege) / 2 : ]
+Num -> Bool isTooBig = (size) size > 4;
 ```
 
-### Dynamic Type
+## Signatures
+
+### Constant
+
+### Dynamic
 
 ```
 dyn Void result;
@@ -16,12 +24,21 @@ type result; # dyn Void
 print result; # void
 
 result = 4;
-type result; # dyn Num
+type result; # "dyn Num"
 result is Num; # true
 
 result = str(result);
-type result; # dyn Str
+type result; # "dyn Str"
 result is Num; # false
+
+```
+
+## Primitive Types {pm_type}
+
+```
+Void, Com, Num, Str, List<Bool [| Num | Str | ...]>,
+
+Bool, Void -> Void, Map<Str, Num | Com> etc
 ```
 
 ### Sets
@@ -68,6 +85,8 @@ print ans; # 0
 
 ## Group Statement
 
+Everything inside {} is reduced to a final value
+
 ```
 Num ans = 0;
 
@@ -108,6 +127,34 @@ while, type, print, import, export, from, assert
 > NOTE: if and else statement are replaced by ? and : respectively
 
 ### return
+
+Carry a final value then jump out of nested group
+until finding an assignment operator
+or reaching the outermost group
+
+```
+Num a = {
+  Num c;
+  Num b = {
+    c = {
+      return 2 * 7; # resolve to c
+    };
+    return c - 1; # resolve to b
+  };
+
+  c - b > 0 ? {
+    ...;
+    {
+      ...;
+      {
+        return 0; # resolve to a, skipping all parent groups
+      }
+    }
+  };
+
+  return c - b;
+};
+```
 
 ```
 print {
@@ -152,16 +199,30 @@ print {
 };
 ```
 
-## Loops
+## Conditional Statements
+
+### if
+
+```
+if true {};
+{} if true;
+```
+
+### while
+
+```
+while true {};
+# or
+{} while true;
+```
 
 ### until
 
 ```
-Num i = 0;
-{
+Num i = 0; until i == 100 {
   print i;
   i++;
-} until i == 100;
+};
 ```
 
 > NOTE: there is no for loop
@@ -172,7 +233,7 @@ Num i = 0;
 
 ## Built-in Values
 
-`void, true, false` etc
+`void, true, false, error` etc
 
 ## Built-in Functions
 
@@ -414,3 +475,11 @@ print length(m); # 4
 m = [];
 print length(m); # 0
 ```
+
+## Acknowledgements
+
+Symbolic Programming Paradigm
+https://www.youtube.com/watch?v=NwckY6o_cNY
+
+Easy Computer Engineering
+https://www.youtube.com/watch?v=BocfpYSGYNE

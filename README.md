@@ -2,43 +2,62 @@
 
 A Symbolic Language
 
+## Motivation
+
+### Pain points in common languages
+
 ## Use first, define later
+
+Expressing ideas in mathematicians tradition
+
+```
+# Electric force between two charges
+
+Num F = k * q1 * q2 / { r ** 2 };
+
+# Where
+Num k = 9e+9;
+Num q1 = ...;
+Num q2 = ...;
+Num r = ...;
+
+print F;
+```
+
+![Coulomb's Law](https://na.cx/i/9MwZjKR.jpg "Coulomb's Law")
+
+#### Image credit
+
+https://lpilen23.wordpress.com/2017/12/06/the-coulombs-law/
 
 ```
 while isTooBig(length(carrot)) { carrot = chop(carrot); };
 
 Str carrot = "<===========================o*";
-Str -> Str chop = (vege) vege[ length(vege) / 2 : ]
-Num -> Bool isTooBig = (size) size > 4;
+Fn chop = (Str vege):Str vege[ length(vege) / 2 : ];
+Fn isTooBig = (Num size):Bool size > 4;
 ```
 
-## Signatures
-
-### Constant
-
-### Dynamic
+## Classes
 
 ```
-dyn Void result;
-type result; # dyn Void
-print result; # void
+class Song {
+  _init = (Str name, Str artist, Num price): Void {};
+};
+```
 
-result = 4;
-type result; # "dyn Num"
-result is Num; # true
+## Strings
 
-result = str(result);
-type result; # "dyn Str"
-result is Num; # false
-
+```
+Str cat = "meow";
+cat *= 2; # "meowmeow" ( equivalent to: cat = cat + cat; )
+Str[] phonemes = cat / 4; # ["me", "ow", "me", "ow"]
 ```
 
 ## Primitive Types {pm_type}
 
 ```
-Void, Com, Num, Str, List<Bool [| Num | Str | ...]>,
-
-Bool, Void -> Void, Map<Str, Num | Com> etc
+Fn | Void | Num | Str | Bool
 ```
 
 ### Sets
@@ -105,13 +124,67 @@ Num ans = 0;
 print ans;
 ```
 
+## Lists
+
+### Named Indexing
+
+```
+Num[] evens = [2, 4, 6, 8];
+
+# Equivalent to
+Num[Num] evens = [ 0: 2, 1: 4, 2: 6, 3: 8 ];
+
+# String as index
+Num[Str] prices = [ "banana": 2.5, "orange": 4.99 ];
+
+print prices["orange"]; # 4.99
+print prices["no such item"]; # void
+```
+
+### Nested Lists
+
+```
+Num[][] m = [
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+];
+```
+
+## Error Handling
+
+```
+error = {
+  data = fetch("");
+};
+
+print error; # "Error: invalid URL"
+
+Fn fetch = (Str url): Data {
+  if url == ""
+    throw "Error: invalid URL";
+
+  Response res = sendRequest(url);
+  ...
+
+  return Data([ "name": res.name, ]);
+};
+```
+
 ## Function Chaining
+
+The chain `f, g, p, q, r` is clearly shown thanks to left-to-right assignment "->"
 
 ```
 print {
-  dyn _;
+  Num _ = 0;
 
-  f(_) -> _; g(_) -> _; p(_) -> _; q(_) -> _; r(_) -> _;
+  f(_) -> _;
+  g(_) -> _;
+  p(_) -> _;
+  q(_) -> _;
+  r(_) -> _;
 
   yield _;
 };
@@ -120,11 +193,11 @@ print {
 ## Statement Keywords
 
 ```
-return, yield, stop, exit, try, catch, throw, until, is,
+if, return, yield, stop, exit, try, catch, throw, until, is,
 while, type, print, import, export, from, assert
 ```
 
-> NOTE: if and else statement are replaced by ? and : respectively
+> NOTE: there is no else statment, use `? ... : ...` instead of `if ... else ...`
 
 ### return
 
@@ -219,10 +292,9 @@ while true {};
 ### until
 
 ```
-Num i = 0; until i == 100 {
-  print i;
-  i++;
-};
+Num i = 0;
+Num[] evens = until i == 10 { i += 2; };
+# evens == [2, ]
 ```
 
 > NOTE: there is no for loop
@@ -275,7 +347,7 @@ each(range(2, 10, 2), print_num); # 2 4 6 8
 
 ### Others
 
-`str(), lsmap(), map(), num(), error()` etc
+`str(), map(), num(), error()` etc
 
 ## Lists
 
@@ -331,8 +403,8 @@ A nsup B;
 
 - Function call: `f();`
 - Keywords: `in, of`
-- Conditional: `a ? { ... };`
-- Ternary conditional: `a ? b : c;`
+
+> UPDATE: Ternary conditional operators `?` and `:` removed
 
 ## Strings
 
@@ -381,34 +453,32 @@ Str key = c"rand_str -u -n 32"; # instead of rand_str(true, false, true, 32);
 
 ```
 Num width, height = 500, area;
-print f"width is a {type width} with value {width}"; # width is a Num with value void
+print width; # 500;
 
-# Everything within a GP_STMT has local scope
+# Everything within a grp_stmt has local scope
 {
   Num width = 120;
-  height = 5 * width; # width has local reference while height has reference outside the local scope
-  yield width * height; # process being resolved to a number
+  print width; # 120;
+  print height; # 500;
+
+  # width has local reference while height has reference outside the local scope
+
+  width * height; # statement group being resolved to a number
 } -> area;
 ```
 
-## Function Type
-
-### Syntax
-
-#### Signature
-
-#### Function Body
-
-### Examples
+## Functions
 
 ```
-# Without function body
-<Num, Bool -> Void> functionName;
+# Declaration
+Fn functionName;
 
-# A function that does nothing;
-<Void -> Void> _ = () {};
-_(); # nothing happened
+# Definition
+Fn f = () {};
+f(); # nothing happened
 ```
+
+`Fn sum = (Num a, Num b) a + b;`
 
 ```
 # a function whoes name is "repeat" that takes a string and a number then returns a string

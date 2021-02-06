@@ -1,9 +1,9 @@
 /*========================================================
  * Statements
  ========================================================*/
-stmt            {ternr_expr_stmt} | {fn_def_stmt} | {fn_appl_stmt} | {sgl_stmt} | {grp_stmt} | {dclr_stmt} | {asnm_stmt} | {cond_stmt}
+stmt            {kwd_stmt} | {expr_stmt} | {fn_def_stmt} | {sgl_stmt} | {grp_stmt} | {dclr_stmt} | {asnm_stmt} | {cond_stmt}
 
-ternr_expr_stmt {ternr_expr} {eos}
+kwd_stmt        {keyword} {stmt}
 
 fn_def_stmt     {fn_def} {eos}
 
@@ -11,36 +11,31 @@ grp_stmt        {stmt_grp} {eos}
 sgl_stmt        {cond_stmt} | {asnm_stmt}
 
 asnm_stmt       {r_asnm_stmt} | {l_asnm_stmt}
-l_asnm_stmt     ( {expr} | {stmt_grp} ) {l_asnm} {id} {eos}
+l_asnm_stmt     {expr} {l_asnm} {id} {eos}
 r_asnm_stmt     ( {id_sign}? {id_type} )? {id} {r_asnm} {stmt}
 
 dclr_stmt       {id_dclr} {eos}
-fn_appl_stmt    {fn_appl} {eos}
 
 cond_stmt       {l_cond_stmt} | {r_cond_stmt}
 l_cond_stmt     {cond_key} {expr} ( {sgl_stmt} | {grp_stmt} )
 r_cond_stmt     ( {sgl_stmt} | {stmt_grp} ) {cond_key} {expr} {eos}
 
-expr_stmt       {stmt_key}? {expr} {eos}
+expr_stmt       {expr} {eos}
 
 stmt_grp        {lbrc} {sgl_stmt} ({sgl_stmt} | {grp_stmt})* {rbrc}
 
 /*========================================================
  * Expressions
  ========================================================*/
-expr            ( {fn_appl} | {expr_grp} | {stmt_grp} | {artm_expr} )
+expr            {id} | {literal} | {ternr_expr} | {rel_expr} | {fn_appl} | {artm_expr_grp} | {stmt_grp} | {artm_expr}
+ternr_expr      {expr} {option} {expr} {colon} {expr}
+rel_expr        {expr} {rel_op} {expr}
 
-artm_expr       {oprn} {artm_op} {oprn}
-
-ternr_expr      ( {expr} | {stmt_grp} ) {option} {stmt_grp}
-
-/* term            {fctr} ({mlt_op}|{div_op}|{mod_op}) {fctr} */
-
-/**
- * { 2 + 3 }
- * -{ { x + 1 } ** 2 - 3 * x + 1 }
- */
-expr_grp        [+-]? {lbrc} {expr}* {expr_grp}* {expr}* {rbrc}
+/* -{ { x+2 } ** 2 } */
+/* { 1 / { x - 2 } } */
+artm_expr_grp   [+-]? {lbrc} {artm_expr} {rbrc}
+/* x + 1 */
+artm_expr       {expr} {artm_op} {expr}
 
 /*========================================================
  * Functions
@@ -56,7 +51,7 @@ fn_sign         {lprt} ( {typed_id} ({ls_sep} {typed_id})* )? {rprt} {colon} {id
 
 parm_ls         {lprt} ( {id} ({ls_sep} {id})* )? {rprt}
 
-oprn            {id} | {num} | {num_complex} | {str_ltr}
+literal         {num} | {num_complex} | {str_ltr}
 
 id              {id_char} ({digit} | {id_char})*
 id_dclr         {id_sign}? {typed_id}
@@ -111,7 +106,7 @@ id_type         {ls_type} | Fn | Void | Num | Str | Bool
 
 str_ltr         \"([^\\\"]|\\.)*\"
 
-keyword         {bltn_id} | {cond_key} | extends | {stopper} | catch  | is | type | print | import | export | from | assert;
+keyword         {bltn_id} | {cond_key} | {stopper} | extends | catch  | is | type | print | import | export | from | assert;
 stopper         return | yield | stop | exit | throw
 cond_key        while | if | until
 

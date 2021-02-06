@@ -4,7 +4,26 @@ A Symbolic Language
 
 ## Motivation
 
+How important is syntax for programming languages?
+This is why I started this project.
+
+We can think of a language as the manifestation of symbols and rules,
+just like flesh and soul. Symbols contribute to the appearence
+of the language, and rules, how this language "behaves".
+
+Through creating a new language with "the best syntax" in my opinion,
+hopefully I will be able to find out how much better (or worse) it will
+perform comparing to some common programming languages.
+
+In my opinion, a good syntax helps us express our ideas easily,
+as well as the syntax in mathematics.
+After all, the underlying reason for creating human readable,
+high level programming language is to help us understand
+and describe what a programme does.
+
 ### Pain points in common languages
+
+[TODO]
 
 ## Use first, define later
 
@@ -46,6 +65,8 @@ class Song {
 };
 ```
 
+[TODO]
+
 ## Strings
 
 ```
@@ -54,10 +75,14 @@ cat *= 2; # "meowmeow" ( equivalent to: cat = cat + cat; )
 Str[] phonemes = cat / 4; # ["me", "ow", "me", "ow"]
 ```
 
-## Primitive Types {pm_type}
+## Primitive Types {id_type}
+
+`Fn | Void | Num | Str | Bool`
 
 ```
-Fn | Void | Num | Str | Bool
+Num a, b = 16;
+
+Num[] ls = [a, b];
 ```
 
 ### Sets
@@ -65,14 +90,14 @@ Fn | Void | Num | Str | Bool
 Sets are list without duplicated elements
 
 ```
-List<Str> BoardMembers = ["Fiona", "Cindy"];
-List<Str> Directors = ["Ada", "Thomas", "Fiona"];
-List<Str> Teachers = ["Jenny", "Ada", "Tracy", "Thomas"];
-List<Str> Staff = Teachers uni Directors;
+Str[] BoardMembers = ["Fiona", "Cindy"];
+Str[] Directors = ["Ada", "Thomas", "Fiona"];
+Str[] Teachers = ["Jenny", "Ada", "Tracy", "Thomas"];
+Str[] Staff = Teachers uni Directors;
 
 "Cindy" in Staff; # false
-"Ada" in Directors int Teachers; # true
-BoardMembers int Directors hsn "Thomas"; # true
+"Ada" in { Directors int Teachers }; # true
+{ BoardMembers int Directors } hsn "Thomas"; # true
 ```
 
 ## Numbers
@@ -86,20 +111,24 @@ BoardMembers int Directors hsn "Thomas"; # true
 
 ### Real
 
-`List<Num> real = [ -10, 512, 3.1415926535, 2.71828e+10, 0xE28A, 0cPI, 0cE ];`
+`Num[] real = [ -10, 512, 3.1415926535, 2.71828e+10, 0xE28A, 0cPi, 0cE ];`
 
 ### Complex
 
 ```
-# Converting a complex number into a real number
-Com c = 0i, dyn Void ans;
+0i == 0;
 
-c is Num; # false
-print c; # 0i
+1i * 1i == -1;
 
-ans = c ** 2; # 0 * i^2 -> 0 * -1 -> 0
-ans is Num; # true
-print ans; # 0
+2 * 3i == 6i;
+```
+
+```
+Num c = 2 + 5i;
+
+c * c == { 2 + 5i } * { 2 + 5i }
+== 4 + 4 * 5i - 25
+== -21 + 20i;
 ```
 
 ## Group Statement
@@ -116,7 +145,7 @@ Num ans = 0;
 };
 
 { # group 2
-  Num x = (0cPI ** 2) / 3;
+  Num x = { 0cPI ** 2 } / 3;
   Num y = cos(x) / x;
   ans += y;
 };
@@ -155,11 +184,13 @@ Num[][] m = [
 ## Error Handling
 
 ```
+# error is a built-in value: Void error = void;
 error = {
   data = fetch("");
+  void; # if the code reaches here, set error to void
 };
 
-print error; # "Error: invalid URL"
+if error != void print error; # "Error: invalid URL"
 
 Fn fetch = (Str url): Data {
   if url == ""
@@ -193,11 +224,9 @@ print {
 ## Statement Keywords
 
 ```
-if, return, yield, stop, exit, try, catch, throw, until, is,
+if, else, return, yield, stop, exit, try, catch, throw, until, is,
 while, type, print, import, export, from, assert
 ```
-
-> NOTE: there is no else statment, use `? ... : ...` instead of `if ... else ...`
 
 ### return
 
@@ -231,7 +260,7 @@ Num a = {
 
 ```
 print {
-  List<Num> v;
+  Num[] v;
   Num index, count = 0;
 
   v = ...; # very large list of numbers
@@ -318,8 +347,8 @@ Num[] evens = until i == 10 { i += 2; };
 `Num? == Num | Void; # true`
 
 ```
-(Num, Num?, Num?) -> List<Num> range = (start, end = 0, step = 1) {
-  List<Num> output = [];
+(Num, Num?, Num?) -> Num[] range = (start, end = 0, step = 1) {
+  Num[] output = [];
 
   Num i = start;
 
@@ -503,7 +532,7 @@ print a; # "10101010"
 ### List Operations
 
 ```
-List<Num> v = [ 2.0, 1.4 ];
+Num[] v = [ 2.0, 1.4 ];
 v = v * 2;
 print v; # [ 4.0, 2.8 ]
 v = v + 1;
@@ -526,8 +555,8 @@ print type _; # void
 ### Left to Right Assignment Using "->"
 
 ```
-List<List<Num>> m;
-List<Num> v1, v2, v3, v4;
+List<Num[]> m;
+Num[] v1, v2, v3, v4;
 
 {
   zeros 4 -> v1; # [ 0, 0, 0, 0 ]

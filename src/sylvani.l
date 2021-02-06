@@ -1,35 +1,36 @@
 /*========================================================
  * Statements
  ========================================================*/
-stmt            {kwd_stmt} | {expr_stmt} | {fn_def_stmt} | {sgl_stmt} | {grp_stmt} | {dclr_stmt} | {asnm_stmt} | {cond_stmt}
+/* stmt            {kwd_stmt} | {expr_stmt} | {fn_def_stmt} | {sgl_stmt} | {grp_stmt} | {dclr_stmt} | {asnm_stmt} | {cond_stmt} */
 
-kwd_stmt        {keyword} {stmt}
+/* kwd_stmt        {keyword} {stmt} */
 
-fn_def_stmt     {fn_def} {eos}
+/* fn_def_stmt     {fn_def} {eos} */
 
-grp_stmt        {stmt_grp} {eos}
-sgl_stmt        {cond_stmt} | {asnm_stmt}
-
-asnm_stmt       {r_asnm_stmt} | {l_asnm_stmt}
-l_asnm_stmt     {expr} {l_asnm} {id} {eos}
-r_asnm_stmt     ( {id_sign}? {id_type} )? {id} {r_asnm} {stmt}
+stmt            {expr} {eos}
 
 dclr_stmt       {id_dclr} {eos}
-
 cond_stmt       {l_cond_stmt} | {r_cond_stmt}
-l_cond_stmt     {cond_key} {expr} ( {sgl_stmt} | {grp_stmt} )
-r_cond_stmt     ( {sgl_stmt} | {stmt_grp} ) {cond_key} {expr} {eos}
+/* if a do_b */
+/* if a do_b else do_c */
+/* if a if b else do_b else do_c */
+l_cond_stmt     {cond_key} {expr} {stmt}
+/* do_b if a */
+/* do_b if a else do_c */
+r_cond_stmt     {expr} {cond_key} {expr} {eos}
 
-expr_stmt       {expr} {eos}
-
-stmt_grp        {lbrc} {sgl_stmt} ({sgl_stmt} | {grp_stmt})* {rbrc}
+grp_stmt        {lbrc} ({stmt} | {grp_stmt})* {rbrc} {eos}
 
 /*========================================================
  * Expressions
  ========================================================*/
-expr            {id} | {literal} | {ternr_expr} | {rel_expr} | {fn_appl} | {artm_expr_grp} | {stmt_grp} | {artm_expr}
+expr            !{expr} | {id} | {id_dclr} | {literal} | {ternr_expr} | {rel_expr} | {fn_appl} | {artm_expr_grp} | {artm_expr}
 ternr_expr      {expr} {option} {expr} {colon} {expr}
 rel_expr        {expr} {rel_op} {expr}
+
+asnm_expr       {r_asnm_expr} | {l_asnm_expr}
+l_asnm_expr     {expr} {l_asnm} {id} {eos}
+r_asnm_expr     ( {id_sign}? {id_type} )? {id} {r_asnm} {stmt}
 
 /* -{ { x+2 } ** 2 } */
 /* { 1 / { x - 2 } } */
@@ -63,6 +64,16 @@ l_asnm          "->"
 /*========================================================
  * Operators
  ========================================================*/
+set_op          {set_in} | {set_ni} | {set_has} | {set_hsn} | {set_sub} | {set_sup} | {set_nsub} | {set_nsup}
+set_in          in
+set_ni          ni
+set_has         has
+set_hsn         hsn
+set_sub         sub
+set_sup         sup
+set_nsub        nsub
+set_nsup        nsup
+
 artm_op         {pow_op} | {mlt_op} | {sub_op} | {div_op} | {mod_op} | {add_op}
 mlt_op          "*"
 pow_op          "**"
@@ -106,7 +117,7 @@ id_type         {ls_type} | Fn | Void | Num | Str | Bool
 
 str_ltr         \"([^\\\"]|\\.)*\"
 
-keyword         {bltn_id} | {cond_key} | {stopper} | extends | catch  | is | type | print | import | export | from | assert;
+keyword         {bltn_id} | {cond_key} | {stopper} | else | extends | catch  | is | type | print | import | export | from | assert;
 stopper         return | yield | stop | exit | throw
 cond_key        while | if | until
 
@@ -154,17 +165,19 @@ colon           ":"
 ls_sep          ","
 eos             ";"
 
-ws              [ \t\n]+
+ws              [ \t\n]
 
 %{
 
-int id_count = 0;
+int idcount = 0;
   
 %}
 
 %%
 
-{id}                  id_count++;
+{id}            idcount++;
+{ws}            ;
+.               {ERROR; yyerror ("Unexpected character")}
 
 %%
 
@@ -174,6 +187,7 @@ int yywrap(void) {
 
 int main(void) {
   yylex();
+  printf("Found %d identifiers\n", idcount);
   printf("Terminated without errors\n");
   return 0;
 }

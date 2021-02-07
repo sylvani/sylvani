@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://avatars.githubusercontent.com/u/78455784?s=200" />
+</p>
+
 # Sylvani Programming Language
 
 A Symbolic Language

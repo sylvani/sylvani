@@ -7,6 +7,8 @@ but simply assume that there are no more files to scan
 */
 
 %{
+#pragma warning(disable 4996)
+
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -17,6 +19,8 @@ using namespace std;
 
 // void yyerror(string msg);
 %}
+
+
 
 num_complex     {num_litr}i
 num_litr        [-+]?({hex}|{num})
@@ -36,7 +40,7 @@ ws              [ \t\n]
 
 {num_litr}                  {
                               yylval.num = atof(yytext);
-                              cout << "number " << yytext << endl;
+                              // cout << "number " << yytext << endl;
                               return NUMBER;
                             }
 
@@ -44,9 +48,9 @@ ws              [ \t\n]
 "-"                         { return SUB; }
 "*"                         { return MUL; }
 "/"                         { return DIV; }
-"%"													{ return MOD; }
+"%"                         { return MOD; }
 "**"                        { return POW; }
-"="													{ return EQ; }
+"="                         { return EQ; }
 
 "."                         { return DOT; }
 "?"                         { return QMARK; }
@@ -54,38 +58,40 @@ ws              [ \t\n]
 ","                         { return COMMA; }
 ";"                         { return EOS; }
 
-"{"   											{ return L_BRC; }
-"}"   											{ return R_BRC; }
-"["											    { return L_SQR; }
-"]"   											{ return R_SQR; }
-"("   											{ return L_PRT; }
-")"   											{ return R_PRT; }
+"{"                         { return L_BRC; }
+"}"                         { return R_BRC; }
+"["                         { return L_SQR; }
+"]"                         { return R_SQR; }
+"("                         { return L_PRT; }
+")"                         { return R_PRT; }
 
-"0cPi"											{ cout << "It's Pi" << endl; return PI; }
-"0cE"											  { return EULER; }
+"0cPi"                      { cout << "It's Pi" << endl; return PI; }
+"0cE"                       { return EULER; }
+
+"print"                     { return PRINT; }
 
 "fac"                       { return FACTORIAL; }
-"mod"												{ return MOD; }
-"pow"												{	return POW; }
-"floor"				  					  { return FLOOR; }
-"ceil"											{ return CEIL; }
-"abs"												{ return ABS; }
-"cos"												{ return COS; }
-"sin"												{ return SIN; }
-"tan"												{ return TAN; }
-"sinh"											{ return SINH; }
-"cosh"											{ return COSH; }
-"tanh"											{ return TANH; }
-"sqrt"											{ return SQRT; }
-"log2"											{ return LOG2; }
-"log10"										  { return LOG10; }
-"cel_to_fah"					      { return CEL_TO_FAH; }
-"fah_to_cel"					      { return FAH_TO_CEL; }
-"km_to_m"								    { return KM_TO_M; }
-"m_to_km"								    { return M_TO_KM; }
-{id_type}										{ return ID_TYPE; }
+"mod"                       { return MOD; }
+"pow"                       { return POW; }
+"floor"                     { return FLOOR; }
+"ceil"                      { return CEIL; }
+"abs"                       { return ABS; }
+"cos"                       { return COS; }
+"sin"                       { return SIN; }
+"tan"                       { return TAN; }
+"sinh"                      { return SINH; }
+"cosh"                      { return COSH; }
+"tanh"                      { return TANH; }
+"sqrt"                      { return SQRT; }
+"log2"                      { return LOG2; }
+"log10"                     { return LOG10; }
+"cel_to_fah"                { return CEL_TO_FAH; }
+"fah_to_cel"                { return FAH_TO_CEL; }
+"km_to_m"                   { return KM_TO_M; }
+"m_to_km"                   { return M_TO_KM; }
+{id_type}                   { return ID_TYPE; }
 
-{id}                  			{
+{id}                        {
                               cout << "Variable '" << yytext << "'" << endl;
                               yylval.index = add_variable(yytext);
                               return ID;

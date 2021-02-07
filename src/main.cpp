@@ -5,6 +5,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    cout << "Terminated without errors" << endl;
+    yyparse();
+    // cout << "Terminated without errors" << endl;
     return 0;
 }

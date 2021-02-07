@@ -43,5 +43,5 @@ term: LITR_DBL              { $$ = $1; }
 %%
 
 void yyerror(char const* msg) {
-  std::cout << "Syntax Error: " << msg << std::endl;
+  std::cout << "Failed to parse: " << msg << std::endl;
 }

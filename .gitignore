@@ -5,4 +5,4 @@ scanner.*
 *.output
 *.tab.*
 *.yy.*
-*.out
+*.out*

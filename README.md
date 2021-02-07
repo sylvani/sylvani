@@ -5,12 +5,24 @@ A Symbolic Language
 ## Installation
 
 Before installing, make sure you have these development tools:
-`g++, flex, bison`
+
+```
+g++, flex, bison
+```
 
 To install, run the following
-`git clone https://github.com/sylvani/sylvani.git`
-`cd sylvani`
-`make`
+
+```
+git clone https://github.com/sylvani/sylvani.git
+```
+
+```
+cd sylvani
+```
+
+```
+make
+```
 
 ## Motivation
 

@@ -2,24 +2,20 @@
 
 A Symbolic Language
 
+## Installation
+
+Before installing, make sure you have these development tools:
+`g++, flex, bison`
+
+To install, run the following
+`git clone https://github.com/sylvani/sylvani.git`
+`cd sylvani`
+`make`
+
 ## Motivation
 
 How important is syntax for programming languages?
 This is why I started this project.
-
-We can think of a language as the manifestation of symbols and rules,
-just like flesh and soul. Symbols contribute to the appearence
-of the language, and rules, how this language "behaves".
-
-Through creating a new language with "the best syntax" in my opinion,
-hopefully I will be able to find out how much better (or worse) it will
-perform comparing to some common programming languages.
-
-In my opinion, a good syntax helps us express our ideas easily,
-as well as the syntax in mathematics.
-After all, the underlying reason for creating human readable,
-high level programming language is to help us understand
-and describe what a programme does.
 
 ### Pain points in common languages
 
@@ -364,7 +360,7 @@ Num[] evens = until i == 10 { i += 2; };
 #### each
 
 ```
-<Num -> Void> print_num = (n) { print n; };
+Fn print_num = (Num n): Void { print n; };
 
 each([0.1, 0.04, 0.25, 0.2], print_num);
 each(range(2, 10, 2), print_num); # 2 4 6 8
@@ -461,7 +457,7 @@ A nsup B;
 ### Command Line Style Function Call
 
 ```
-<Bool, Bool, Bool, Num -> Num> rand_string = (u, l, n, str_len) {
+Fn rand_string = (Bool u, Bool l, Bool n, Num str_len): Num {
   Str output = "";
 
   while str_len > 0 {
@@ -510,8 +506,10 @@ f(); # nothing happened
 `Fn sum = (Num a, Num b) a + b;`
 
 ```
-# a function whoes name is "repeat" that takes a string and a number then returns a string
-<Str, Num -> Str> repeat = (s, n) {
+# a function whoes name is "repeat"
+# that takes a string and a number then returns a string
+
+Fn repeat = (Str s, Num n): Str {
   Str output = "";
   print type output; # Str
   while n > 0 {
@@ -521,7 +519,7 @@ f(); # nothing happened
   output;
 };
 
-print type repeat; # <Str, Num -> Str>
+print type repeat; # Fn: Str, Num -> Str
 
 Str a = repeat("10", 4);
 print a; # "10101010"
@@ -542,7 +540,7 @@ print v; # [ 5.0, 3,8 ]
 ### void
 
 ```
-<Void -> Void> test = () {
+Fn test = (): Void {
   Num a = 255;
   Num b = a * 4;
   print b / 2;
@@ -555,7 +553,7 @@ print type _; # void
 ### Left to Right Assignment Using "->"
 
 ```
-List<Num[]> m;
+Num[][] m;
 Num[] v1, v2, v3, v4;
 
 {

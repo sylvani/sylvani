@@ -1,12 +1,6 @@
 /*========================================================
  * Statements
  ========================================================*/
-/* stmt            {kwd_stmt} | {expr_stmt} | {fn_def_stmt} | {sgl_stmt} | {grp_stmt} | {dclr_stmt} | {asnm_stmt} | {cond_stmt} */
-
-/* kwd_stmt        {keyword} {stmt} */
-
-/* fn_def_stmt     {fn_def} {eos} */
-
 stmt            {expr} {eos}
 
 dclr_stmt       {id_dclr} {eos}
@@ -24,17 +18,19 @@ grp_stmt        {lbrc} ({stmt} | {grp_stmt})* {rbrc} {eos}
 /*========================================================
  * Expressions
  ========================================================*/
-expr            !{expr} | {id} | {id_dclr} | {literal} | {ternr_expr} | {rel_expr} | {fn_appl} | {artm_expr_grp} | {artm_expr}
+expr            !{expr} | {ano_fn} | {expr_grp} | {artm_expr} | {asnm_expr} | {id} | {id_dclr} | {literal} | {ternr_expr} | {rel_expr} | {fn_appl}
 ternr_expr      {expr} {option} {expr} {colon} {expr}
 rel_expr        {expr} {rel_op} {expr}
 
 asnm_expr       {r_asnm_expr} | {l_asnm_expr}
-l_asnm_expr     {expr} {l_asnm} {id} {eos}
-r_asnm_expr     ( {id_sign}? {id_type} )? {id} {r_asnm} {stmt}
+/* {} -> a */
+l_asnm_expr     {expr} {l_asnm} {id}
+/* const Num[] a = {} */
+r_asnm_expr     ( {id_sign}? {id_type} )? {id} {r_asnm} {expr}
 
 /* -{ { x+2 } ** 2 } */
 /* { 1 / { x - 2 } } */
-artm_expr_grp   [+-]? {lbrc} {artm_expr} {rbrc}
+expr_grp        [+-]? {lbrc} {expr} {rbrc}
 /* x + 1 */
 artm_expr       {expr} {artm_op} {expr}
 
@@ -44,8 +40,8 @@ artm_expr       {expr} {artm_op} {expr}
 
 fn_appl         {id} {parm_ls}
 
-/* (Num a, Bool b): Str {}; */
-fn_def          {fn_sign} {grp_stmt}
+/* (Num a, Bool b): Str {} */
+ano_fn          {fn_sign} {expr}
 
 /* (Num a, Bool b): Str */
 fn_sign         {lprt} ( {typed_id} ({ls_sep} {typed_id})* )? {rprt} {colon} {id_type}
@@ -166,28 +162,3 @@ ls_sep          ","
 eos             ";"
 
 ws              [ \t\n]
-
-%{
-
-int idcount = 0;
-  
-%}
-
-%%
-
-{id}            idcount++;
-{ws}            ;
-.               {ERROR; yyerror ("Unexpected character")}
-
-%%
-
-int yywrap(void) {
-  return 1;
-}
-
-int main(void) {
-  yylex();
-  printf("Found %d identifiers\n", idcount);
-  printf("Terminated without errors\n");
-  return 0;
-}

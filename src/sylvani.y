@@ -8,6 +8,8 @@
 #include <cmath>
 #include "utils.hpp"
 
+using namespace std;
+
 /* Used for variable stores. Defined in mem.hpp */
 extern int set_variable(int index, double val);
 extern int variable_set[100];
@@ -16,7 +18,7 @@ extern double variable_values[100];
 /* Flex functions */
 extern int yylex(void);
 extern void yyterminate();
-void yyerror(const char *s);
+void yyerror(string msg);
 extern FILE* yyin;
   
 %}
@@ -39,11 +41,11 @@ extern FILE* yyin;
 %token<num> COS SIN TAN COSH SINH TANH
 %token<num> CEL_TO_FAH FAH_TO_CEL
 %token<num> M_TO_KM KM_TO_M
-%token<num> VAR_KEYWORD 
-%token<index> VARIABLE
-%token<num> EOL
+%token<num> ID_TYPE 
+%token<index> ID
+%token<num> EOS
 %type<num> program
-%type<num> calculation
+%type<num> stmt
 %type<num> constant
 %type<num> expr
 %type<num> function
@@ -65,25 +67,24 @@ extern FILE* yyin;
 
 %%
 	
-program: calculation EOL  { printf("=%.2f\n",$1); }
-    ;
+program: stmt EOS	{ cout << $1 << endl; };
 
-calculation:
-		  expr
-		| function
-		| assignment
+stmt: expr EOS
+		| function EOS
+		| assignment EOS
 		;
 		
-constant: PI { $$ = 3.1415926535; }
+constant:
+		| PI								{ $$ = 3.1415926535; }
+		| EULER							{ $$ = 2.718281828459045; }
 		;
 		
-expr:
-			SUB expr					{ $$ = -$2; }
+expr: SUB expr					{ $$ = -$2; }
     | NUMBER            { $$ = $1; }
-		| VARIABLE					{ $$ = variable_values[$1]; }
+		| ID					{ $$ = variable_values[$1]; }
 		| constant	
 		| function
-		| expr DIV expr     { if ($3 == 0) { yyerror("Cannot divide by zero"); exit(1); } else $$ = $1 / $3; }
+		| expr DIV expr     { if ($3 == 0) { yyerror("Cannot divide by zero"); exit(10); } else $$ = $1 / $3; }
 		| expr MUL expr     { $$ = $1 * $3; }
 		| L_BRC expr R_BRC	{ $$ = $2; }
 		| expr ADD expr     { $$ = $1 + $3; }
@@ -92,8 +93,7 @@ expr:
 		| expr MOD expr     { $$ = modulo($1, $3); }
     ;
 		
-function:
-			conversion
+function: conversion
 		| log_function
 		| trig_function
 		| hyperbolic_function
@@ -105,40 +105,42 @@ function:
 		;
 
 trig_function:
-			COS expr  			  { $$ = cos($2); }
+		| COS expr  			  { $$ = cos($2); }
 		| SIN expr 					{ $$ = sin($2); }
 		| TAN expr 					{ $$ = tan($2); }
 		;
 	
 log_function:
-			LOG2 expr 				{ $$ = log2($2); }
+		| LOG2 expr					{ $$ = log2($2); }
 		| LOG10 expr 				{ $$ = log10($2); }
 		;
 		
 hyperbolic_function:
-			COSH expr  			  { $$ = cosh($2); }
+		| COSH expr  			  { $$ = cosh($2); }
 		| SINH expr 				{ $$ = sinh($2); }
 		| TANH expr 				{ $$ = tanh($2); }
 		;
 		
-conversion
-		: temperature_conversion
+conversion:
+		| temperature_conversion
 		| distance_conversion
 		;
 
-temperature_conversion
-		:	expr CEL_TO_FAH 	{ $$ = cel_to_fah($1); }
+temperature_conversion:
+		|	expr CEL_TO_FAH 	{ $$ = cel_to_fah($1); }
 		| expr FAH_TO_CEL 	{ $$ = fah_to_cel($1); }
+		;
 
-distance_conversion
-		: expr M_TO_KM 			{ $$ = m_to_km($1); }
+distance_conversion:
+		| expr M_TO_KM 			{ $$ = m_to_km($1); }
 		| expr KM_TO_M 			{ $$ = km_to_m($1); }
+		;
 		
 assignment: 
-		VAR_KEYWORD VARIABLE EQ calculation { $$ = set_variable($2, $4); }
+		| ID_TYPE ID EQ stmt { $$ = set_variable($2, $4); }
 		;
 %%
 
-void yyerror(const char *msg) {
-  std::cout << "Failed to parse: " << msg << std::endl;
+void yyerror(string msg) {
+  cout << "Failed to parse: " << msg << endl;
 }

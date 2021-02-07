@@ -3,7 +3,7 @@ all:
 	flex -o scanner.cpp sylvani.l; \
 	bison -o parser.cpp sylvani.y; \
 	g++ -g -o sylc scanner.cpp parser.cpp main.cpp; \
-	./sylc
+	# ./sylc
 		
 clean:
 	cd src; \

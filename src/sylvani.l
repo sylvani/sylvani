@@ -13,14 +13,11 @@ but simply assume that there are no more files to scan
 #include <cstdlib>
 #include <string>
 #include "parser.hpp"
-#include "mem.hpp"
 
 using namespace std;
 
-// void yyerror(string msg);
+extern int add_variable(char *var_name);
 %}
-
-
 
 num_complex     {num_litr}i
 num_litr        [-+]?({hex}|{num})
@@ -33,16 +30,23 @@ id              {id_char}({digit}|{id_char})*
 digit           [0-9]
 id_char         [a-zA-Z_]
 ws              [ \t\n]
+eos             [;]
 
 %%
 
-{ws}+
+{ws}+                       {}
 
 {num_litr}                  {
                               yylval.num = atof(yytext);
-                              // cout << "number " << yytext << endl;
                               return NUMBER;
                             }
+
+"~"                         { return B_COM; }
+"&"                         { return B_AND; }
+"|"                         { return B_OR; }
+"^"                         { return B_XOR; }
+"<<"                        { return B_LSH; }
+">>"                        { return B_RSH; }
 
 "+"                         { return ADD; }
 "-"                         { return SUB; }
@@ -56,7 +60,7 @@ ws              [ \t\n]
 "?"                         { return QMARK; }
 ":"                         { return COLON; }
 ","                         { return COMMA; }
-";"                         { return EOS; }
+{eos}                       { return EOS; }
 
 "{"                         { return L_BRC; }
 "}"                         { return R_BRC; }
@@ -92,7 +96,6 @@ ws              [ \t\n]
 {id_type}                   { return ID_TYPE; }
 
 {id}                        {
-                              cout << "Variable '" << yytext << "'" << endl;
                               yylval.index = add_variable(yytext);
                               return ID;
                             }

@@ -1,6 +1,31 @@
 #ifndef FUNC_H
 #define FUNC_H
 
+#include <iostream>
+#include <cstdlib>
+#include <string>
+#include <cmath>
+#include "mem.hpp"
+
+using namespace std;
+
+void debug(double x)
+{
+  cout << "[DEBUG] Parser: " << x << endl;
+}
+
+void yyerror(string msg)
+{
+  cout << "Failed to parse: " << msg << endl;
+}
+
+double eval(int index, string text, int debug = 0)
+{
+  double val = variable_values[index];
+  if (debug == 1)
+    cout << "Parser: " << text << " is an ID with value " << val << endl;
+  return val;
+}
 /* Add additional functionality to the calculator besides basic arithmetic */
 /* Some of the functionality is already built into C like the trig and logarithmic functions, however conversions and such were not. */
 

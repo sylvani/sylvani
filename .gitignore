@@ -1,4 +1,8 @@
 .DS_Store
-lex.yy.c
-lex.yy.h
+.vscode
+parser.*
+scanner.*
+*.output
+*.tab.*
+*.yy.*
 *.out

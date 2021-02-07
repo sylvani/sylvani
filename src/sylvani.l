@@ -7,54 +7,73 @@ but simply assume that there are no more files to scan
  */
 
 %{
-
 #include "parser.hpp"
+#include "mem.hpp"
 
-int idcount = 0;
-
+void yyerror(const char *s);
 %}
 
-hex_num         0x[a-fA-F0-9]+
-mat_cst         0c[A-Z]+
+num_complex     {num_litr}i
+num_litr        [-+]?({hex}|{num})
+hex             0x[a-fA-F0-9]+
+num             [0-9]*([0-9]\.?|\.[0-9])[0-9]*([Ee][+-]?[0-9]+)
+
+id_type         Fn|Void|Num|Str|Bool
+id              {id_char}({digit}|{id_char})*
 
 digit           [0-9]
 id_char         [a-zA-Z_]
-
-id_sign         const
-
-binop           [-+*%/]
-
-lsqr            "["
-rsqr            "]"
-lbrc            "{"
-rbrc            "}"
-lprt            "("
-rprt            ")"
-
-acc_prop        "."
-option          "?"
-colon           ":"
-ls_sep          ","
-eos             ";"
-
 ws              [ \t\n]
 
 %%
 
-{digit}+ {
-  yylval.dbl = atof(yytext);
-  return LITR_DBL;
-}
+{num_litr}                  { yylval.num = atof(yytext); return NUMBER; }
 
-{binop} { return yytext[0]; }
-\n { return '\n'; }
-.
+"+"                         { return ADD; }
+"-"                         { return SUB; }
+"*"                         { return MUL; }
+"/"                         { return DIV; }
+"%"													{ return MOD; }
+"**"                        { return POW; }
+"="													{ return EQ; }
+
+"."                         { return DOT; }
+"?"                         { return QMARK; }
+":"                         { return COLON; }
+","                         { return COMMA; }
+";"                         { return EOL; }
+
+"{"   											{ return L_BRC; }
+"}"   											{ return R_BRC; }
+"["											    { return L_SQR; }
+"]"   											{ return R_SQR; }
+"("   											{ return L_PRT; }
+")"   											{ return R_PRT; }
+
+"fac"                       { return FACTORIAL; }
+"0cPi"											{ return PI; }
+"0cE"											  { return EULER; }
+"mod"												{ return MOD; }
+"pow"												{	return POW; }
+"floor"				  					  { return FLOOR; }
+"ceil"											{ return CEIL; }
+"abs"												{ return ABS; }
+"cos"												{ return COS; }
+"sin"												{ return SIN; }
+"tan"												{ return TAN; }
+"sinh"											{ return SINH; }
+"cosh"											{ return COSH; }
+"tanh"											{ return TANH; }
+"sqrt"											{ return SQRT; }
+"log2"											{ return LOG2; }
+"log10"										  { return LOG10; }
+"cel_to_fah"					      { return CEL_TO_FAH; }
+"fah_to_cel"					      { return FAH_TO_CEL; }
+"km_to_m"								    { return KM_TO_M; }
+"m_to_km"								    { return M_TO_KM; }
+{id_type}										{ return VAR_KEYWORD; }
+{id}                  			{ yylval.index = add_variable(yytext); return VARIABLE; }
+{ws}+
+.                           { yyerror("Unexpected character"); exit(2); }
 
 %%
-
-/* int main(void) {
-  yylex();
-  printf("Found %d identifiers\n", idcount);
-  printf("Terminated without errors\n");
-  return 0;
-} */

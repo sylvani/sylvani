@@ -5,4 +5,5 @@ scanner.*
 *.output
 *.tab.*
 *.yy.*
-*.out*
+*.dSYM*
+sylc

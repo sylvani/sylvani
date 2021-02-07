@@ -30,8 +30,12 @@ make
 
 ## Motivation
 
-How important is syntax for programming languages?
-This is why I started this project.
+Programming languages are usually created to solve certain problems,
+and the importance of syntax is often overlooked.
+
+Yet it is very hard to define what it means by good syntax.
+In my opinion, a good syntax helps us understand the code better
+and express ideas easier using the code.
 
 ### Pain points in common languages
 
@@ -62,10 +66,10 @@ print F;
 https://lpilen23.wordpress.com/2017/12/06/the-coulombs-law/
 
 ```
-while isTooBig(length(carrot)) { carrot = chop(carrot); };
+while isTooBig(leng(carrot)) { carrot = chop(carrot); };
 
 Str carrot = "<===========================o*";
-Fn chop = (Str vege):Str vege[ length(vege) / 2 : ];
+Fn chop = (Str vege):Str vege[ leng(vege) / 2 : ];
 Fn isTooBig = (Num size):Bool size > 4;
 ```
 
@@ -179,7 +183,7 @@ Num[Num] evens = [ 0: 2, 1: 4, 2: 6, 3: 8 ];
 Num[Str] prices = [ "banana": 2.5, "orange": 4.99 ];
 
 print prices["orange"]; # 4.99
-print prices["no such item"]; # void
+print prices["no such item"] is Void; # true
 ```
 
 ### Nested Lists
@@ -237,7 +241,7 @@ print {
 
 ```
 if, else, return, yield, stop, exit, try, catch, throw, until, is,
-while, type, print, import, export, from, assert
+while, typeof, print, import, export, from, assert
 ```
 
 ### return
@@ -334,15 +338,15 @@ while true {};
 
 ```
 Num i = 0;
-Num[] evens = until i == 10 { i += 2; };
-# evens == [2, ]
+Num[] evens = { i += 2 } until i == 10;
+# evens == [2, 4, 6, 8, 10]
 ```
 
 > NOTE: there is no for loop
 
 ## Anonymous Function
 
-`(Num, Str) -> Num> (a, b) { ... }`
+`(Num a, Str b): Num { ... };`
 
 ## Built-in Values
 
@@ -352,14 +356,20 @@ Num[] evens = until i == 10 { i += 2; };
 
 ### List Helpers
 
-`push(), pop(), each(), split(), list(), zeros(), shape(), length(), range()` etc
+`push(), pop(), each(), split(), list(), zeros(), shape(), leng(), range()` etc
+
+```
+Fn leng = (Void[] x): Num {
+  Num i = 0;
+  { i++ } until x[i] is Void;
+  return i;
+};
+```
 
 #### range
 
-`Num? == Num | Void; # true`
-
 ```
-(Num, Num?, Num?) -> Num[] range = (start, end = 0, step = 1) {
+Fn range = (Num start, Num end = 0, Num step = 1) {
   Num[] output = [];
 
   Num i = start;
@@ -389,8 +399,6 @@ each(range(2, 10, 2), print_num); # 2 4 6 8
 ### Others
 
 `str(), map(), num(), error()` etc
-
-## Lists
 
 ### Operators
 
@@ -434,11 +442,6 @@ A nsup B;
 ### Bitwise
 
 `~, &, |, ^, <<, >>`
-
-### Modifiers
-
-- Constant modifier: `const Num MAX_SIZE;`
-- dynamic type modifier: `dyn Void result;`
 
 ### Others
 
@@ -527,7 +530,7 @@ f(); # nothing happened
 
 Fn repeat = (Str s, Num n): Str {
   Str output = "";
-  print type output; # Str
+  print typeof output; # Str
   while n > 0 {
     n--;
     output += s;
@@ -535,7 +538,7 @@ Fn repeat = (Str s, Num n): Str {
   output;
 };
 
-print type repeat; # Fn: Str, Num -> Str
+print typeof repeat; # Fn: Str, Num -> Str
 
 Str a = repeat("10", 4);
 print a; # "10101010"
@@ -563,7 +566,7 @@ Fn test = (): Void {
   void; # the last variable appeared inside {} will be assigned
 };
 void _ = test(); # 510
-print type _; # void
+print typeof _; # void
 ```
 
 ### Left to Right Assignment Using "->"
@@ -583,10 +586,10 @@ m[] = v1; # m[0] == [ 0, 0, 0, 0 ]
 m[] = v2; # m == [ [ 0, 0, 0, 0, ], [ 1, 1, 1, 1 ] ]
 v3 -> m[2]; # m[2] == [ -1, -1, -1, -1 ]
 v4 -> m[];
-print length(m); # 4
+print leng(m); # 4
 
 m = [];
-print length(m); # 0
+print leng(m); # 0
 ```
 
 ## Acknowledgements

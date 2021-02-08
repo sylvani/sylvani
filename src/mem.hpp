@@ -2,46 +2,75 @@
 #define MEM_H
 
 #include <string>
+#include <iostream>
+#include <map>
+#include <cassert>
 
-/* Series of functions used to add memory store functionality to the calculator */
+using namespace std;
 
-// Store variable names
-char *variable_names[100];
-// Flags for if the variables have been set
-int variable_set[100];
-// Number of variables defined
-int variable_counter = 0;
-// Store values of the variables
-double variable_values[100];
-
-/* Add a variable name to the memory store */
-int add_variable(char *var_name)
+enum Type
 {
-  int x; // Index var
+  Fn,
+  Void,
+  Num,
+  Str,
+  Bool,
+  FnLs,
+  NumLs,
+  StrLs,
+  BoolLs,
+};
 
-  /* Search for the variable and return its index if found */
-  for (x = 0; x < variable_counter; x++)
-  {
-    if (strcmp(var_name, variable_names[x]) == 0)
-    {
-      return x;
-    }
-  }
+struct data
+{
+  Type type;
+  // num, numls, str, strls
+  double numval;
+  string strval;
+  string *strlsval;
+  double *numlsval;
+};
 
-  /* Variable not found yet. */
-  /* Define it and add it to the end of the array. */
-  variable_counter++;
-  variable_names[x] = strdup(var_name);
-  return x;
+map<string, data> variables;
+
+struct varres
+{
+  bool found;
+  map<string, data>::iterator i;
+};
+
+varres vardefined(string name)
+{
+  map<string, data>::iterator i = variables.find(name);
+  bool found = i != variables.end();
+  varres res = {
+      .found = found,
+  };
+  if (found)
+    res.i = i;
+  return res;
 }
 
 /* Set a variables value in the memory store */
-int set_variable(int index, double val)
+void setvar(string name, data nval)
 {
-  variable_values[index] = val;
-  variable_set[index] = 1;
+  varres res = vardefined(name);
+  assert(res.found);
+  res.i->second = nval;
+}
 
-  return val;
+void defvar(string name, data val)
+{
+  varres res = vardefined(name);
+  assert(!res.found);
+  variables[name] = val;
+}
+
+data getvar(string name)
+{
+  varres res = vardefined(name);
+  assert(res.found);
+  return res.i->second;
 }
 
 #endif

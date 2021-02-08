@@ -2,61 +2,43 @@
 #define FUNC_H
 
 #include <iostream>
-#include <cstdlib>
+// #include <cstdlib>
+#include <cassert>
 #include <string>
-#include <cmath>
-#include "mem.hpp"
+// #include <cmath>
 
 using namespace std;
 
-void debug(double x)
+template <typename T>
+void debug(T x)
 {
   cout << "[DEBUG] Parser: " << x << endl;
 }
 
-void yyerror(string msg)
+double oprt(char op, double a, double b)
 {
-  cout << "Failed to parse: " << msg << endl;
-}
-
-double eval(int index, string text, int debug = 0)
-{
-  double val = variable_values[index];
-  if (debug == 1)
-    cout << "Parser: " << text << " is an ID with value " << val << endl;
-  return val;
-}
-/* Add additional functionality to the calculator besides basic arithmetic */
-/* Some of the functionality is already built into C like the trig and logarithmic functions, however conversions and such were not. */
-
-// Convert celsius to fahrenheit
-double cel_to_fah(double cel) { return cel * 9 / 5 + 32; }
-// Convert fahrenheit to celsius
-double fah_to_cel(double fah) { return (fah - 32) * 5 / 9; }
-
-// Convert kilometers to miles
-double km_to_m(double km) { return km * 0.62137; }
-// Convert miles to kilometers
-double m_to_km(double m) { return m / 0.62137; }
-
-// Calculate factorial
-double factorial(double n)
-{
-  double x;
-  double f = 1;
-
-  for (x = 1; x <= n; x++)
+  switch (op)
   {
-    f *= x;
+  case '+':
+    return a + b;
+  case '-':
+    return a - b;
+  case '*':
+    return a * b;
   }
 
-  return f;
-}
+  if (op == '/' || op == '%')
+  {
 
-// Calculate modulus
-int modulo(double x, double y)
-{
-  return (int)x % (int)y;
+    assert(b != 0.0);
+
+    if (op == '%')
+      return (int)a %
+             (int)b;
+
+    return a / b;
+  }
+  assert(false);
 }
 
 #endif

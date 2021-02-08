@@ -8,6 +8,7 @@ but simply assume that there are no more files to scan
 
 %{
 #pragma warning(disable 4996)
+#define YYDEBUG 1
 
 #include <iostream>
 #include <cstdlib>
@@ -16,7 +17,7 @@ but simply assume that there are no more files to scan
 
 using namespace std;
 
-extern int add_variable(char *var_name);
+// extern int add_variable(char *var_name);
 %}
 
 num_complex     {num_litr}i
@@ -38,7 +39,7 @@ eos             [;]
 
 {num_litr}                  {
                               yylval.num = atof(yytext);
-                              return NUMBER;
+                              return NUM;
                             }
 
 "~"                         { return B_COM; }
@@ -47,6 +48,19 @@ eos             [;]
 "^"                         { return B_XOR; }
 "<<"                        { return B_LSH; }
 ">>"                        { return B_RSH; }
+
+"&="                        { return B_AND_EQ; }
+"|="                        { return B_OR_EQ; }
+"^="                        { return B_XOR_EQ; }
+"<<="                       { return B_LSH_EQ; }
+">>="                       { return B_RSH_EQ; }
+
+"*="                        { return MUL_EQ; }
+"+="                        { return ADD_EQ; }
+"-="                        { return SUB_EQ; }
+"/="                        { return DIV_EQ; }
+"**="                       { return POW_EQ; }
+"%="                        { return MOD_EQ; }
 
 "+"                         { return ADD; }
 "-"                         { return SUB; }
@@ -69,34 +83,12 @@ eos             [;]
 "("                         { return L_PRT; }
 ")"                         { return R_PRT; }
 
-"0cPi"                      { cout << "It's Pi" << endl; return PI; }
-"0cE"                       { return EULER; }
-
 "print"                     { return PRINT; }
 
-"fac"                       { return FACTORIAL; }
-"mod"                       { return MOD; }
-"pow"                       { return POW; }
-"floor"                     { return FLOOR; }
-"ceil"                      { return CEIL; }
-"abs"                       { return ABS; }
-"cos"                       { return COS; }
-"sin"                       { return SIN; }
-"tan"                       { return TAN; }
-"sinh"                      { return SINH; }
-"cosh"                      { return COSH; }
-"tanh"                      { return TANH; }
-"sqrt"                      { return SQRT; }
-"log2"                      { return LOG2; }
-"log10"                     { return LOG10; }
-"cel_to_fah"                { return CEL_TO_FAH; }
-"fah_to_cel"                { return FAH_TO_CEL; }
-"km_to_m"                   { return KM_TO_M; }
-"m_to_km"                   { return M_TO_KM; }
 {id_type}                   { return ID_TYPE; }
 
 {id}                        {
-                              yylval.index = add_variable(yytext);
+                              // yylval.index = add_variable(yytext);
                               return ID;
                             }
 

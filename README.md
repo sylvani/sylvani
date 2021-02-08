@@ -77,7 +77,9 @@ Fn isTooBig = (Num size):Bool size > 4;
 
 ```
 class Song {
-  _init = (Str name, Str artist, Num price): Void {};
+  init = (Str name, Str artist, Num price) {
+    this.name = name;
+  };
 };
 ```
 

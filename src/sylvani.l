@@ -25,8 +25,8 @@ num_litr        [-+]?({hex}|{num})
 hex             0x[a-fA-F0-9]+
 num             [0-9]*([0-9]\.?|\.[0-9])[0-9]*([Ee][+-]?[0-9]+)?
 
-id_type         Fn|Void|Num|Str|Bool
-id              {id_char}({digit}|{id_char})*
+symb_type       (Fn|Void|Num|Str|Bool)(\[\])*
+symbol          {id_char}({digit}|{id_char})*
 
 digit           [0-9]
 id_char         [a-zA-Z_]
@@ -37,10 +37,11 @@ eos             [;]
 
 {ws}+                       {}
 
-{num_litr}                  {
-                              yylval.num = atof(yytext);
-                              return NUM;
-                            }
+{num_litr}                  { return NUM; }
+
+"||"                        { return OR; }
+"&&"                        { return AND; }
+"!"                         { return NOT; }
 
 "~"                         { return B_COM; }
 "&"                         { return B_AND; }
@@ -68,7 +69,12 @@ eos             [;]
 "/"                         { return DIV; }
 "%"                         { return MOD; }
 "**"                        { return POW; }
-"="                         { return EQ; }
+
+"="                         { return L_ASNM; }
+"->"                        { return R_ASNM; }
+
+"=="                        { return EQ; }
+"!="                        { return NEQ; }
 
 "."                         { return DOT; }
 "?"                         { return QMARK; }
@@ -85,12 +91,9 @@ eos             [;]
 
 "print"                     { return PRINT; }
 
-{id_type}                   { return ID_TYPE; }
+{symb_type}                 { return SYMB_TYPE; }
 
-{id}                        {
-                              // yylval.index = add_variable(yytext);
-                              return ID;
-                            }
+{symbol}                    { return SYMBOL; }
 
 .                           { cout << "Scanner: unknown character '" << yytext << "' " << endl; }
 

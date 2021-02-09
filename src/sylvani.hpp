@@ -64,7 +64,7 @@ struct expression
   expression(long v) : type(ex_type::string), numvalue(move(v)) {}
 
   bool is_pure() const;
-  expression operator/=(expression &&b) && { return expression(ex_type::copy, move(b), move(*this)); }
+  expression operator%=(expression &&b) && { return expression(ex_type::copy, move(b), move(*this)); }
 };
 
 #define o(n)               \

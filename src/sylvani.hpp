@@ -67,4 +67,18 @@ struct expression
   expression operator/=(expression &&b) && { return expression(ex_type::copy, move(b), move(*this)); }
 };
 
+#define o(n)               \
+  template <typename... T> \
+  inline expression e_##n(T &&...args) { return expression(ex_type::n, forward<T>(args)...); }
+ENUM_EXPRESSIONS(o)
+#undef o
+struct function
+{
+  string name;
+  expression code;
+  unsigned num_vars = 0, num_params = 0;
+};
+
+struct lexcontext;
+
 #endif

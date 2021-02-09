@@ -1,3 +1,17 @@
+/* [L]ook [A]head [L]eft to [R]ight parser */
+%skeleton "lalr1.cc"
+%define parser_class_name {sylvani_parser}
+%define api.token constructor
+%define api.value.type variant
+%define parse.assert
+%define parse.error verbose
+%locations
+
+%code requires
+{
+  #include "sylvani.hpp"
+} // %code requires
+
 %token END 0
 %token RETURN "return" WHILE "while" IF "if" VAR "var" IDENTIFIER NUMCONST STRINGCONST
 %token OR "||" AND "&&" EQ "==" NE "!=" PP "++" MM "--" PL_EQ "+=" MI_EQ "-="
